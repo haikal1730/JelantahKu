@@ -8,6 +8,7 @@ import 'package:jelantah_ku/features/warga/domain/entities/transaction.dart';
 import 'package:jelantah_ku/features/warga/presentation/providers/transaction_provider.dart';
 import 'package:jelantah_ku/features/warga/presentation/providers/transaction_state.dart';
 import 'package:jelantah_ku/features/warga/presentation/widgets/transaction_detail_modal.dart';
+import 'package:jelantah_ku/features/warga/presentation/widgets/offline_status_banner.dart';
 
 class TransactionHistoryScreen extends ConsumerStatefulWidget {
   const TransactionHistoryScreen({super.key});
@@ -64,13 +65,20 @@ class _TransactionHistoryScreenState
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await ref
-              .read(transactionNotifierProvider.notifier)
-              .loadTransactions(user.id);
-        },
-        child: _buildBody(context, ref, trxState, user.id),
+      body: Column(
+        children: [
+          const OfflineStatusBanner(),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await ref
+                    .read(transactionNotifierProvider.notifier)
+                    .loadTransactions(user.id);
+              },
+              child: _buildBody(context, ref, trxState, user.id),
+            ),
+          ),
+        ],
       ),
     );
   }

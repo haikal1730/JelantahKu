@@ -8,16 +8,45 @@ import '../../domain/usecases/get_transaction_history.dart';
 import '../../domain/usecases/get_user_balance.dart';
 import 'transaction_state.dart';
 import 'balance_provider.dart';
+import 'persistent_storage_provider.dart';
+import '../../data/services/transaction_sync_service.dart';
+import 'dart:async';
 
 // DataSource Provider
 final transactionDataSourceProvider = Provider<TransactionMockDataSource>((ref) {
   return TransactionMockDataSource();
 });
 
+final transactionSyncServiceProvider = Provider<TransactionSyncService>((ref) {
+  return TransactionSyncService(
+    localDataSource: ref.watch(transactionLocalDataSourceProvider),
+    remoteDataSource: ref.watch(transactionDataSourceProvider),
+  );
+});
+
+/// Menjalankan sinkronisasi otomatis saat koneksi internet kembali.
+final syncManagerProvider = Provider<StreamSubscription<bool>>((ref) {
+  final connectivity = ref.watch(connectivityServiceProvider);
+  final syncService = ref.watch(transactionSyncServiceProvider);
+
+  final subscription = connectivity.onStatusChanged.listen((online) async {
+    if (online) {
+      await syncService.syncPendingTransactions();
+    }
+  });
+
+  ref.onDispose(subscription.cancel);
+  return subscription;
+});
+
 // Repository Provider
 final transactionRepositoryProvider = Provider<TransactionRepository>((ref) {
   final dataSource = ref.watch(transactionDataSourceProvider);
-  return TransactionRepositoryImpl(dataSource: dataSource);
+  return TransactionRepositoryImpl(
+    dataSource: dataSource,
+    localDataSource: ref.watch(transactionLocalDataSourceProvider),
+    connectivityService: ref.watch(connectivityServiceProvider),
+  );
 });
 
 // UseCase Providers
