@@ -38,9 +38,20 @@ class UserNotifier extends StateNotifier<UserProfile> {
           role: UserRole.warga,
         ));
 
-  void switchRole(UserRole newRole) {
-    state = state.copyWith(role: newRole);
+  void setProfile({
+    required String id,
+    required String name,
+    String? village,
+    UserRole? role,
+  }) {
+    state = state.copyWith(
+      id: id,
+      name: name,
+      village: village ?? state.village,
+      role: role ?? state.role,
+    );
   }
+
 }
 
 final userNotifierProvider =

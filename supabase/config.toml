@@ -1,0 +1,13 @@
+project_id = "jelantahku"
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["io.supabase.jelantahku://login-callback/", "http://localhost:3000"]
+
+[auth.email]
+enabled = true
+confirm_email = false
+
+[auth.external.google]
+enabled = true

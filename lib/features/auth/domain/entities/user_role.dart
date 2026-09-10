@@ -1,7 +1,19 @@
 enum UserRole {
   warga,
   admin,
-  owner,
+  owner;
+
+  static UserRole fromDatabase(Object? value) {
+    switch (value?.toString().toLowerCase()) {
+      case 'admin':
+        return UserRole.admin;
+      case 'owner':
+        return UserRole.owner;
+      case 'warga':
+      default:
+        return UserRole.warga;
+    }
+  }
 }
 
 extension UserRoleX on UserRole {

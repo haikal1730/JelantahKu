@@ -11,7 +11,7 @@ class TransactionSyncService {
   });
 
   final TransactionLocalDataSource localDataSource;
-  final TransactionMockDataSource remoteDataSource;
+  final TransactionDataSource remoteDataSource;
 
   Future<int> syncPendingTransactions() async {
     final pending = await localDataSource.getPendingTransactions();

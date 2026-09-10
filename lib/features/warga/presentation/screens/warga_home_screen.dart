@@ -10,6 +10,7 @@ import 'package:jelantah_ku/features/warga/presentation/providers/transaction_pr
 import 'package:jelantah_ku/features/warga/presentation/providers/transaction_state.dart';
 import 'package:jelantah_ku/features/warga/presentation/widgets/transaction_detail_modal.dart';
 import 'package:jelantah_ku/features/warga/presentation/screens/deposit_confirmation_screen.dart';
+import 'package:jelantah_ku/features/payment/presentation/screens/subscription_screen.dart';
 
 class WargaHomeScreen extends ConsumerStatefulWidget {
   final VoidCallback onNavigateToHistory;
@@ -302,6 +303,30 @@ class _WargaHomeScreenState extends ConsumerState<WargaHomeScreen> {
                       },
                     ),
                   ],
+                ),
+              ),
+
+              Card(
+                child: ListTile(
+                  leading: const CircleAvatar(
+                    child: Icon(Icons.workspace_premium_rounded),
+                  ),
+                  title: const Text(
+                    'JelantahKu Premium',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: const Text(
+                    'Langganan Rp25.000/bulan • pembayaran sandbox',
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SubscriptionScreen(),
+                      ),
+                    );
+                  },
                 ),
               ),
 

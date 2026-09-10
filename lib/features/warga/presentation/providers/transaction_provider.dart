@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/config/app_config.dart';
+import '../../../../core/supabase/supabase_client.dart';
 import '../../data/datasources/transaction_mock_datasource.dart';
+import '../../data/datasources/supabase_transaction_datasource.dart';
 import '../../data/repositories/transaction_repository_impl.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/calculate_deposit_value.dart';
@@ -13,7 +16,12 @@ import '../../data/services/transaction_sync_service.dart';
 import 'dart:async';
 
 // DataSource Provider
-final transactionDataSourceProvider = Provider<TransactionMockDataSource>((ref) {
+final transactionDataSourceProvider = Provider<TransactionDataSource>((ref) {
+  if (AppConfig.hasSupabaseConfig) {
+    try {
+      return SupabaseTransactionDataSource();
+    } catch (_) {}
+  }
   return TransactionMockDataSource();
 });
 
@@ -74,7 +82,7 @@ final confirmDepositUseCaseProvider = Provider<ConfirmDeposit>((ref) {
 class TransactionNotifier extends StateNotifier<TransactionState> {
   final GetTransactionHistory getTransactionHistory;
   final ConfirmDeposit confirmDepositUseCase;
-  final TransactionMockDataSource dataSource;
+  final TransactionDataSource dataSource;
   final Ref ref;
 
   TransactionNotifier({
@@ -84,15 +92,22 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
     required this.ref,
   }) : super(const TransactionState.initial());
 
-  bool get isErrorSimulated => dataSource.shouldSimulateError;
+  bool get isErrorSimulated =>
+      dataSource is TransactionMockDataSource &&
+      (dataSource as TransactionMockDataSource).shouldSimulateError;
 
   void toggleErrorSimulation(String userId) {
-    dataSource.shouldSimulateError = !dataSource.shouldSimulateError;
+    if (dataSource is TransactionMockDataSource) {
+      final mock = dataSource as TransactionMockDataSource;
+      mock.shouldSimulateError = !mock.shouldSimulateError;
+    }
     loadTransactions(userId);
   }
 
   void setErrorSimulation(bool value, String userId) {
-    dataSource.shouldSimulateError = value;
+    if (dataSource is TransactionMockDataSource) {
+      (dataSource as TransactionMockDataSource).shouldSimulateError = value;
+    }
     loadTransactions(userId);
   }
 

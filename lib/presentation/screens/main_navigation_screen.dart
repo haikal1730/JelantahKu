@@ -4,6 +4,7 @@ import 'package:jelantah_ku/core/constants/app_theme.dart';
 import 'package:jelantah_ku/features/admin/presentation/screens/admin_dashboard_screen.dart';
 import 'package:jelantah_ku/features/auth/domain/entities/user_role.dart';
 import 'package:jelantah_ku/features/auth/presentation/providers/user_provider.dart';
+import 'package:jelantah_ku/features/auth/presentation/providers/auth_provider.dart';
 import 'package:jelantah_ku/features/owner/presentation/screens/owner_dashboard_screen.dart';
 import 'package:jelantah_ku/features/warga/presentation/screens/deposit_confirmation_screen.dart';
 import 'package:jelantah_ku/features/warga/presentation/screens/transaction_history_screen.dart';
@@ -175,38 +176,29 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
               style: const TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 24),
-
-            // Role Switcher Section
             Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Ganti Role (Demostrasi Role-Based Navigation):',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 12),
-                    ...UserRole.values.map((role) {
-                      return RadioListTile<UserRole>(
-                        title: Text(role.label),
-                        subtitle: Text(role.description),
-                        value: role,
-                        groupValue: user.role,
-                        activeColor: AppTheme.primaryGreen,
-                        onChanged: (newRole) {
-                          if (newRole != null) {
-                            ref.read(userNotifierProvider.notifier).switchRole(newRole);
-                            setState(() {
-                              _selectedIndex = 0;
-                            });
-                          }
-                        },
-                      );
-                    }),
-                  ],
+              child: ListTile(
+                leading: const Icon(Icons.verified_user, color: AppTheme.primaryGreen),
+                title: const Text('Role Akun'),
+                subtitle: Text('${user.role.label} — ${user.role.description}'),
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.logout, color: Colors.red),
+                label: const Text(
+                  'Keluar',
+                  style: TextStyle(color: Colors.red),
                 ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.red),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                onPressed: () async {
+                  await ref.read(authNotifierProvider.notifier).signOut();
+                },
               ),
             ),
           ],
@@ -223,42 +215,29 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
           UserAccountsDrawerHeader(
             decoration: const BoxDecoration(color: AppTheme.primaryGreen),
             accountName: Text(user.name),
-            accountEmail: Text('Role Active: ${user.role.label}'),
+            accountEmail: Text('Role: ${user.role.label}'),
             currentAccountPicture: const CircleAvatar(
               backgroundColor: Colors.white,
               child: Icon(Icons.eco, color: AppTheme.primaryGreen, size: 32),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'PILIH ROLE DEMO',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
-            ),
+          ListTile(
+            leading: const Icon(Icons.verified_user, color: AppTheme.primaryGreen),
+            title: const Text('Role akun'),
+            subtitle: Text(user.role.description),
           ),
-          ...UserRole.values.map((role) {
-            return ListTile(
-              leading: Icon(
-                role == UserRole.warga
-                    ? Icons.person
-                    : (role == UserRole.admin
-                        ? Icons.admin_panel_settings
-                        : Icons.business),
-                color: user.role == role ? AppTheme.primaryGreen : Colors.grey,
-              ),
-              title: Text(role.label),
-              selected: user.role == role,
-              onTap: () {
-                ref.read(userNotifierProvider.notifier).switchRole(role);
-                setState(() {
-                  _selectedIndex = 0;
-                });
-                Navigator.pop(context);
-              },
-            );
-          }),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: const Text('Keluar'),
+            onTap: () async {
+              Navigator.pop(context);
+              await ref.read(authNotifierProvider.notifier).signOut();
+            },
+          ),
         ],
       ),
     );
   }
+
 }

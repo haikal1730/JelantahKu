@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "764217751836",
+    "project_id": "jelantahku",
+    "storage_bucket": "jelantahku.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:764217751836:android:a1f8971a0e9627134062d9",
+        "android_client_info": {
+          "package_name": "com.jelantahku.jelantah_ku"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKCaljO8glmBIkKeA-LoD0zb6yvBHYrz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
