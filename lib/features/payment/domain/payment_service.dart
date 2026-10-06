@@ -149,7 +149,7 @@ class BackendPaymentService implements PaymentService {
 
 class PaymentServiceFactory {
   static PaymentService create() {
-    if (AppConfig.paymentMode == 'real' && AppConfig.hasPaymentApi) {
+    if ((AppConfig.paymentMode == 'real'|| AppConfig.paymentMode == 'sandbox') && AppConfig.hasPaymentApi) {
       return BackendPaymentService(ApiClient());
     }
     return MockPaymentService();
