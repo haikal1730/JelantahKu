@@ -13,10 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../support/inspection_support.dart';
 
-/// NFR-001 — Security (Confidentiality).
-///
-/// Kredensial, secret server, dan token sesi tidak boleh terekspos melalui kode
-/// sumber klien, repositori, maupun penyimpanan lokal yang tidak terenkripsi.
 void main() {
   // Pola secret yang hanya boleh berada di server / environment variable.
   final serverSecretPatterns = <String, RegExp>{
